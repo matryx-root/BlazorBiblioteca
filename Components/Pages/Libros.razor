@@ -1,0 +1,47 @@
+﻿@page "/libros"
+@using BlazorBiblioteca.Shared   <!-- IMPORTANTE -->
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+<h2>Lista de Libros</h2>
+
+@if (libros == null)
+{
+    <p>Cargando...</p>
+}
+else if (!libros.Any())
+{
+    <p>No hay libros registrados.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Autor</th>
+                <th>Páginas</th>
+                <th>Fecha de Publicación</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var libro in libros)
+            {
+                <tr>
+                    <td>@libro.NombreLibro</td>
+                    <td>@libro.Autor</td>
+                    <td>@libro.NumPaginas</td>
+                    <td>@libro.FechaPublicacion.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Libro> libros;
+
+    protected override async Task OnInitializedAsync()
+    {
+        libros = await Http.GetFromJsonAsync<List<Libro>>("https://localhost:7038/api/Libro");
+    }
+}
